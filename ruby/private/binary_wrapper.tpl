@@ -119,9 +119,6 @@ def main(args)
   runfiles_envkey, runfiles_envvalue = runfiles_envvar(runfiles)
   ENV[runfiles_envkey] = runfiles_envvalue if runfiles_envkey
 
-  ENV["GEM_PATH"] = File.join(runfiles, "{gem_path}") if !"{gem_path}".empty?
-  ENV["GEM_HOME"] = File.join(runfiles, "{gem_path}") if !"{gem_path}".empty?
-
   ruby_program = find_ruby_binary
 
   main = {main}
