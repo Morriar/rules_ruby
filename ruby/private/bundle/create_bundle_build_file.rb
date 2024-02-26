@@ -216,6 +216,7 @@ class BundleBuildFileGenerator
     # we make them unique based on their name to creating multiple dependencies for the same gem
     specs = bundle.specs
       .uniq(&:name)
+      .reject { |spec| spec.source.path? }
 
     gems             = specs.map(&:name)
 
@@ -256,9 +257,6 @@ class BundleBuildFileGenerator
   end
 
   def register_gem(spec, template_out, bundle_lib_paths, bundle_binaries)
-    # Do not register local gems
-    return if spec.source.path?
-
     base_dir = "lib/ruby/#{ruby_version}"
     if spec.source.is_a?(Bundler::Source::Git)
       stub = spec.source.specs.find { |s| s.name == spec.name }.stub
