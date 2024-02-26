@@ -220,7 +220,7 @@ class BundleBuildFileGenerator
 
     gems             = specs.map(&:name)
 
-    specs.each { |spec| register_gem(spec, template_out, bundle_lib_paths, bundle_binaries) }
+    specs.each { |spec| register_gem(spec, template_out, bundle, bundle_lib_paths, bundle_binaries) }
 
     template_out.puts ALL_GEMS
                         .gsub('{bundle_lib_files}', to_flat_string(bundle_lib_paths.map { |p| "#{p}/**/*" }))
@@ -256,7 +256,7 @@ class BundleBuildFileGenerator
     ::FileUtils.move(temp_gemfile_lock, gemfile_lock, force: true)
   end
 
-  def register_gem(spec, template_out, bundle_lib_paths, bundle_binaries)
+  def register_gem(spec, template_out, bundle, bundle_lib_paths, bundle_binaries)
     base_dir = "lib/ruby/#{ruby_version}"
     if spec.source.is_a?(Bundler::Source::Git)
       stub = spec.source.specs.find { |s| s.name == spec.name }.stub
@@ -291,7 +291,12 @@ class BundleBuildFileGenerator
     gem_binaries               = find_bundle_binaries(gem_path)
     bundle_binaries[spec.name] = gem_binaries unless gem_binaries.nil? || gem_binaries.empty?
 
-    deps = spec.dependencies.map { |d| ":#{d.name}" }
+    deps = spec.dependencies
+      .reject do |d|
+        # skip dependencies to gem with a path
+        bundle.specs.find { |s| s.name == d.name }&.source&.path?
+      end
+      .map { |d| ":#{d.name}" }
 
     warn("registering gem #{spec.name} with binaries: #{gem_binaries}") if bundle_binaries.key?(spec.name)
 
