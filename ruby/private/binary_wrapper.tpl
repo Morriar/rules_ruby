@@ -144,6 +144,10 @@ def main(args)
     system(gem_program + " pristine {gems_to_pristine}")
   end
 
+  # Require Bundler defaults
+  require "rubygems"
+  require "bundler/setup"
+
   exec(ruby_program, *rubyopt, main, *args)
   # TODO(yugui) Support windows
 end
