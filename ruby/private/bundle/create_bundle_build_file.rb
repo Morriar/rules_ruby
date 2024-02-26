@@ -211,9 +211,15 @@ class BundleBuildFileGenerator
     bundle           = Bundler::LockfileParser.new(Bundler.read_file(gemfile_lock))
     bundle_lib_paths = []
     bundle_binaries  = {} # gem-name => [ gem's binaries ], ...
-    gems             = bundle.specs.map(&:name)
 
-    bundle.specs.each { |spec| register_gem(spec, template_out, bundle_lib_paths, bundle_binaries) }
+    # gems with a specified platform appear multiple times in the lockfile
+    # we make them unique based on their name to creating multiple dependencies for the same gem
+    specs = bundle.specs
+      .uniq(&:name)
+
+    gems             = specs.map(&:name)
+
+    specs.each { |spec| register_gem(spec, template_out, bundle_lib_paths, bundle_binaries) }
 
     template_out.puts ALL_GEMS
                         .gsub('{bundle_lib_files}', to_flat_string(bundle_lib_paths.map { |p| "#{p}/**/*" }))
