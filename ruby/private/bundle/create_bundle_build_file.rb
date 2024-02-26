@@ -47,8 +47,7 @@ GEM_TEMPLATE
 ALL_GEMS = <<~ALL_GEMS
   ruby_library(
     name = "gems",
-    srcs = glob([{bundle_lib_files}]) + glob(["bin/*"]),
-    includes = {bundle_lib_paths},
+    deps = {bundle_deps},
   )
 
   ruby_library(
