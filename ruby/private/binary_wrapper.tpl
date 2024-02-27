@@ -108,13 +108,13 @@ def find_gem_binary
 end
 
 def main(args)
-  custom_loadpaths = {loadpaths}
+  # custom_loadpaths = {loadpaths}
   runfiles = find_runfiles
 
-  loadpaths = create_loadpath_entries(custom_loadpaths, runfiles)
-  loadpaths += get_repository_imports(runfiles)
-  loadpaths += ENV['RUBYLIB'].split(':') if ENV.key?('RUBYLIB')
-  ENV['RUBYLIB'] = loadpaths.sort.uniq.join(':')
+  #loadpaths = create_loadpath_entries(custom_loadpaths, runfiles)
+  #loadpaths += get_repository_imports(runfiles)
+  #loadpaths += ENV['RUBYLIB'].split(':') if ENV.key?('RUBYLIB')
+  # ENV['RUBYLIB'] = loadpaths.sort.uniq.join(':')
 
   runfiles_envkey, runfiles_envvalue = runfiles_envvar(runfiles)
   ENV[runfiles_envkey] = runfiles_envvalue if runfiles_envkey
